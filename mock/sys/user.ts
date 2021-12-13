@@ -22,7 +22,7 @@ export function createFakeUserList() {
     {
       userId: '2',
       username: 'test',
-      password: '123456',
+      password: '1234567',
       realName: 'test user',
       avatar: 'https://q1.qlogo.cn/g?b=qq&nk=339449197&s=640',
       desc: 'tester',

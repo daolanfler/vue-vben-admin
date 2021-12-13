@@ -91,7 +91,7 @@
       "source.fixAll.eslint": true,
       "source.fixAll.stylelint": true
     }
-  },
+    },
   "i18n-ally.localesPaths": ["src/locales/lang"],
   "i18n-ally.keystyle": "nested",
   "i18n-ally.sortKeys": true,
