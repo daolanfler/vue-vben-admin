@@ -5,26 +5,60 @@
         <a-button type="primary" @click="handleReloadCurrent"> 刷新当前页 </a-button>
         <a-button type="primary" @click="handleReload"> 刷新并返回第一页 </a-button>
       </template>
+
+      <template #action="{ record }">
+        <TableAction
+          :actions="[
+            {
+              label: '编辑',
+              icon: 'ant-design:edit-outlined',
+              onClick: () => handleEdit(record),
+            },
+          ]"
+        />
+      </template>
     </BasicTable>
+    <EditModal :bookList="bookList" @register="registerEditModal" />
   </PageWrapper>
 </template>
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
   import { getBookTopicList } from '/@/api/burnook/bookTopic';
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { PageWrapper } from '/@/components/Page';
+  import { useModal } from '/@/components/Modal';
   import { getTopicColumns } from './tableData';
+  import EditModal from './editModal.vue';
+  import { BurnBookItem } from '/@/api/burnook/model/bookModel';
+  import { getBookList } from '/@/api/burnook/book';
 
   export default defineComponent({
-    components: { BasicTable, PageWrapper },
+    components: { BasicTable, PageWrapper, TableAction, EditModal },
     setup() {
+      const bookList = ref<BurnBookItem[]>([]);
+
       const [registerTable, { reload }] = useTable({
         title: '古籍主题',
         columns: getTopicColumns(),
         api: getBookTopicList,
         pagination: { pageSize: 20 },
+        actionColumn: {
+          width: 160,
+          title: '操作',
+          dataIndex: 'action',
+          slots: {
+            customRender: 'action',
+          },
+        },
       });
+
+      const [registerEditModal, { openModal: openEditModal, setModalProps }] = useModal();
+
+      getBookList().then((data) => {
+        bookList.value = data;
+      });
+
       function handleReloadCurrent() {
         reload();
       }
@@ -34,11 +68,19 @@
           page: 1,
         });
       }
+      const handleEdit = (record: Recordable) => {
+        console.log('todo', record);
 
+        openEditModal(true);
+      };
       return {
         registerTable,
         handleReloadCurrent,
         handleReload,
+        handleEdit,
+        registerEditModal,
+        openEditModal,
+        bookList,
       };
     },
   });
