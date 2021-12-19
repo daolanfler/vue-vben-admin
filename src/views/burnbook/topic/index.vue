@@ -2,6 +2,7 @@
   <PageWrapper contentBackground contentClass="flex" dense contentFullHeight fixedHeight>
     <BasicTable @register="registerTable">
       <template #toolbar>
+        <a-button type="primary" @click="handleAddTopic">添加主题</a-button>
         <a-button type="primary" @click="handleReloadCurrent"> 刷新当前页 </a-button>
         <!-- <a-button type="primary" @click="handleReload"> 刷新并返回第一页 </a-button> -->
       </template>
@@ -20,8 +21,9 @@
     </BasicTable>
     <EditModal
       :bookList="bookList"
-      @register="registerEditModal"
       :currentTopic="editTopic"
+      :isEdit="isModalEdit"
+      @register="registerEditModal"
       @confirmed="handleReloadCurrent"
     />
   </PageWrapper>
@@ -43,7 +45,7 @@
     components: { BasicTable, PageWrapper, TableAction, EditModal },
     setup() {
       const bookList = ref<BurnBookItem[]>([]);
-
+      const isModalEdit = ref(true);
       const [registerTable, { reload }] = useTable({
         title: '古籍主题',
         columns: getTopicColumns(),
@@ -59,7 +61,7 @@
         },
       });
 
-      const [registerEditModal, { openModal: openEditModal }] = useModal();
+      const [registerEditModal, { openModal: openEditModal, setModalProps }] = useModal();
 
       getBookList().then((data) => {
         bookList.value = data;
@@ -77,6 +79,14 @@
       const editTopic = ref<BurnBookTopicItem>();
       const handleEdit = (record: UnwrapNestedRefs<BurnBookTopicItem>) => {
         editTopic.value = record;
+        isModalEdit.value = true;
+        openEditModal(true);
+      };
+      const handleAddTopic = () => {
+        setModalProps({
+          title: '添加主题',
+        });
+        isModalEdit.value = false;
         openEditModal(true);
       };
       return {
@@ -88,6 +98,8 @@
         openEditModal,
         editTopic,
         bookList,
+        isModalEdit,
+        handleAddTopic,
       };
     },
   });

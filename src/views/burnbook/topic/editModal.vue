@@ -17,13 +17,13 @@
 </template>
 
 <script lang="ts">
-  import { computed, defineComponent, ref, watch } from 'vue';
+  import { computed, defineComponent, ref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, FormActionType, FormSchema, useForm } from '/@/components/Form/index';
   import { BurnBookItem } from '/@/api/burnook/model/bookModel';
   import { SelectProps } from 'ant-design-vue';
   import { BurnBookTopicItem, BurnBookTopicUpdate } from '/@/api/burnook/model/bookTopicModel';
-  import { updateBookTopic } from '/@/api/burnook/bookTopic';
+  import { addBookTopic, updateBookTopic } from '/@/api/burnook/bookTopic';
 
   export enum BookTopicCateIdEnum {
     UNSELECTED,
@@ -42,36 +42,15 @@
         type: Object as PropType<BurnBookTopicItem>,
         default: () => ({}),
       },
+      isEdit: {
+        type: Boolean,
+        default: true,
+      },
     },
     emits: ['confirmed', 'register'],
     setup(props, { emit }) {
-      const confirmLoading = ref(false);
-      const lines = ref(10);
-      const [register, { redoModalHeight, setModalProps, closeModal }] = useModalInner();
+      const [register, { setModalProps, closeModal }] = useModalInner();
       const formElRef = ref<Nullable<FormActionType>>(null);
-
-      watch(
-        () => lines.value,
-        () => {
-          redoModalHeight();
-        },
-      );
-
-      // function handleShow(visible: boolean) {
-      //   if (visible) {
-      //     loading.value = true;
-      //     setModalProps({ loading: true, confirmLoading: true });
-      //     setTimeout(() => {
-      //       lines.value = Math.round(Math.random() * 30 + 5);
-      //       loading.value = false;
-      //       setModalProps({ loading: false, confirmLoading: false });
-      //     }, 3000);
-      //   }
-      // }
-
-      function setLines() {
-        lines.value = Math.round(Math.random() * 20 + 10);
-      }
 
       const schemas = computed<FormSchema[]>(() => {
         return [
@@ -80,14 +59,16 @@
             label: '主题名称',
             component: 'Input',
             componentProps: {},
-            defaultValue: props.currentTopic.name,
+            defaultValue: props.isEdit ? props.currentTopic.name : '',
             required: true,
           },
           {
             field: 'cate_id',
             label: '类别',
             component: 'Select',
-            defaultValue: props.currentTopic.cate_id,
+            defaultValue: props.isEdit
+              ? props.currentTopic.cate_id
+              : BookTopicCateIdEnum.UNSELECTED,
             rules: [
               {
                 required: true,
@@ -107,7 +88,7 @@
             field: 'book_ids',
             label: '书籍',
             component: 'Select',
-            defaultValue: props.currentTopic.book_ids,
+            defaultValue: props.isEdit ? props.currentTopic.book_ids : [],
             rules: [
               {
                 type: 'array',
@@ -138,16 +119,24 @@
         schemas,
         showActionButtonGroup: false,
       });
-      async function handleOk(e) {
+      async function handleOk() {
         try {
           setModalProps({ confirmLoading: true });
           await validateFields();
           const model = getFieldsValue() as Omit<BurnBookTopicUpdate, 'id'>;
-          updateBookTopic(props.currentTopic.id, {
-            book_ids: model.book_ids,
-            cate_id: model.cate_id,
-            name: model.name,
-          });
+          if (props.isEdit) {
+            updateBookTopic(props.currentTopic.id, {
+              book_ids: model.book_ids,
+              cate_id: model.cate_id,
+              name: model.name,
+            });
+          } else {
+            addBookTopic({
+              book_ids: model.book_ids,
+              cate_id: model.cate_id,
+              name: model.name,
+            });
+          }
           emit('confirmed');
           closeModal();
         } catch (e) {
@@ -157,7 +146,7 @@
         }
       }
 
-      return { register, setLines, schemas, handleOk, formElRef, registerForm };
+      return { register, handleOk, formElRef, registerForm };
     },
   });
 </script>

@@ -3,6 +3,7 @@ import {
   BookTopicParams,
   BurnBookPageListResultItemsModel,
   BurnBookPageListResultModel,
+  BurnBookTopicAdd,
   BurnBookTopicUpdate,
 } from './model/bookTopicModel';
 
@@ -23,4 +24,8 @@ export const getBookTopicList = (params: BookTopicParams) => {
 
 export const updateBookTopic = (id: number, postData: Omit<BurnBookTopicUpdate, 'id'>) => {
   return defHttp.put({ url: `${Api.BookTopics}/${id}`, data: postData });
+};
+
+export const addBookTopic = (data: BurnBookTopicAdd) => {
+  return defHttp.post({ url: `${Api.BookTopics}`, data });
 };

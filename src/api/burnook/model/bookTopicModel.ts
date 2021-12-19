@@ -23,6 +23,7 @@ export interface BurnBookTopicUpdate {
   book_ids: number[];
   cate_id: number;
 }
+export type BurnBookTopicAdd = Omit<BurnBookTopicUpdate, 'id'>;
 
 export type BookTopicParams = Pick<BasicPageParams, 'page'>;
 
