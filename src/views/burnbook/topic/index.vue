@@ -3,7 +3,7 @@
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button type="primary" @click="handleReloadCurrent"> 刷新当前页 </a-button>
-        <a-button type="primary" @click="handleReload"> 刷新并返回第一页 </a-button>
+        <!-- <a-button type="primary" @click="handleReload"> 刷新并返回第一页 </a-button> -->
       </template>
 
       <template #action="{ record }">
@@ -18,12 +18,17 @@
         />
       </template>
     </BasicTable>
-    <EditModal :bookList="bookList" @register="registerEditModal" />
+    <EditModal
+      :bookList="bookList"
+      @register="registerEditModal"
+      :currentTopic="editTopic"
+      @confirmed="handleReloadCurrent"
+    />
   </PageWrapper>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, UnwrapNestedRefs } from 'vue';
   import { getBookTopicList } from '/@/api/burnook/bookTopic';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { PageWrapper } from '/@/components/Page';
@@ -32,6 +37,7 @@
   import EditModal from './editModal.vue';
   import { BurnBookItem } from '/@/api/burnook/model/bookModel';
   import { getBookList } from '/@/api/burnook/book';
+  import { BurnBookTopicItem } from '/@/api/burnook/model/bookTopicModel';
 
   export default defineComponent({
     components: { BasicTable, PageWrapper, TableAction, EditModal },
@@ -53,7 +59,7 @@
         },
       });
 
-      const [registerEditModal, { openModal: openEditModal, setModalProps }] = useModal();
+      const [registerEditModal, { openModal: openEditModal }] = useModal();
 
       getBookList().then((data) => {
         bookList.value = data;
@@ -68,9 +74,9 @@
           page: 1,
         });
       }
-      const handleEdit = (record: Recordable) => {
-        console.log('todo', record);
-
+      const editTopic = ref<BurnBookTopicItem>();
+      const handleEdit = (record: UnwrapNestedRefs<BurnBookTopicItem>) => {
+        editTopic.value = record;
         openEditModal(true);
       };
       return {
@@ -80,6 +86,7 @@
         handleEdit,
         registerEditModal,
         openEditModal,
+        editTopic,
         bookList,
       };
     },

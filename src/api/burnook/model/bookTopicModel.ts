@@ -17,6 +17,13 @@ export interface BurnBookTopicItem {
   cate_id: number;
 }
 
+export interface BurnBookTopicUpdate {
+  id: number;
+  name: string;
+  book_ids: number[];
+  cate_id: number;
+}
+
 export type BookTopicParams = Pick<BasicPageParams, 'page'>;
 
 export type BurnBookPageListResultModel = BurnPaginationResult<BurnBookTopicItem>;

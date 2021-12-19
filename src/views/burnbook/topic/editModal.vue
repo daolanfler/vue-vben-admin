@@ -1,11 +1,5 @@
 <template>
-  <BasicModal
-    v-bind="$attrs"
-    destroyOnClose
-    @register="register"
-    title="编辑主题"
-    :helpMessage="['提示1', '提示2']"
-  >
+  <BasicModal v-bind="$attrs" destroyOnClose @register="register" @ok="handleOk" title="编辑主题">
     <!-- <template #insertFooter>
       <a-button type="primary" danger @click="setLines">点我更新内容</a-button>
     </template> -->
@@ -18,16 +12,18 @@
       </ul>
     </template> -->
 
-    <BasicForm :schemas="schemas" :show-action-button-group="false" />
+    <BasicForm @register="registerForm" ref="formElRef" />
   </BasicModal>
 </template>
 
 <script lang="ts">
   import { computed, defineComponent, ref, watch } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
-  import { BasicForm, FormSchema } from '/@/components/Form/index';
+  import { BasicForm, FormActionType, FormSchema, useForm } from '/@/components/Form/index';
   import { BurnBookItem } from '/@/api/burnook/model/bookModel';
   import { SelectProps } from 'ant-design-vue';
+  import { BurnBookTopicItem, BurnBookTopicUpdate } from '/@/api/burnook/model/bookTopicModel';
+  import { updateBookTopic } from '/@/api/burnook/bookTopic';
 
   export enum BookTopicCateIdEnum {
     UNSELECTED,
@@ -42,11 +38,17 @@
         type: Array as PropType<BurnBookItem[]>,
         default: () => [],
       },
+      currentTopic: {
+        type: Object as PropType<BurnBookTopicItem>,
+        default: () => ({}),
+      },
     },
-    setup(props) {
-      const loading = ref(true);
+    emits: ['confirmed', 'register'],
+    setup(props, { emit }) {
+      const confirmLoading = ref(false);
       const lines = ref(10);
-      const [register, { setModalProps, redoModalHeight }] = useModalInner();
+      const [register, { redoModalHeight, setModalProps, closeModal }] = useModalInner();
+      const formElRef = ref<Nullable<FormActionType>>(null);
 
       watch(
         () => lines.value,
@@ -78,11 +80,21 @@
             label: '主题名称',
             component: 'Input',
             componentProps: {},
+            defaultValue: props.currentTopic.name,
+            required: true,
           },
           {
             field: 'cate_id',
             label: '类别',
             component: 'Select',
+            defaultValue: props.currentTopic.cate_id,
+            rules: [
+              {
+                required: true,
+                type: 'number',
+                message: '请输入',
+              },
+            ],
             componentProps: {
               options: [
                 { value: BookTopicCateIdEnum.UNSELECTED, label: '未选择' },
@@ -95,6 +107,14 @@
             field: 'book_ids',
             label: '书籍',
             component: 'Select',
+            defaultValue: props.currentTopic.book_ids,
+            rules: [
+              {
+                type: 'array',
+                message: '请选择书籍',
+                required: true,
+              },
+            ],
             componentProps: {
               options: props.bookList.map((item) => {
                 return {
@@ -114,8 +134,30 @@
           },
         ];
       });
+      const [registerForm, { validateFields, getFieldsValue }] = useForm({
+        schemas,
+        showActionButtonGroup: false,
+      });
+      async function handleOk(e) {
+        try {
+          setModalProps({ confirmLoading: true });
+          await validateFields();
+          const model = getFieldsValue() as Omit<BurnBookTopicUpdate, 'id'>;
+          updateBookTopic(props.currentTopic.id, {
+            book_ids: model.book_ids,
+            cate_id: model.cate_id,
+            name: model.name,
+          });
+          emit('confirmed');
+          closeModal();
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setModalProps({ confirmLoading: false });
+        }
+      }
 
-      return { register, setLines, schemas };
+      return { register, setLines, schemas, handleOk, formElRef, registerForm };
     },
   });
 </script>
