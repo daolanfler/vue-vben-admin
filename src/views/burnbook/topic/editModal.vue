@@ -21,7 +21,7 @@
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, FormActionType, FormSchema, useForm } from '/@/components/Form/index';
   import { BurnBookItem } from '/@/api/burnook/model/bookModel';
-  import { SelectProps } from 'ant-design-vue';
+  import { message, SelectProps } from 'ant-design-vue';
   import { BurnBookTopicItem, BurnBookTopicUpdate } from '/@/api/burnook/model/bookTopicModel';
   import { addBookTopic, updateBookTopic } from '/@/api/burnook/bookTopic';
 
@@ -125,22 +125,25 @@
           await validateFields();
           const model = getFieldsValue() as Omit<BurnBookTopicUpdate, 'id'>;
           if (props.isEdit) {
-            updateBookTopic(props.currentTopic.id, {
+            await updateBookTopic(props.currentTopic.id, {
               book_ids: model.book_ids,
               cate_id: model.cate_id,
               name: model.name,
             });
+            message.success('操作成功');
           } else {
-            addBookTopic({
+            await addBookTopic({
               book_ids: model.book_ids,
               cate_id: model.cate_id,
               name: model.name,
             });
+            message.success('编辑成功');
           }
           emit('confirmed');
           closeModal();
         } catch (e) {
           console.log(e);
+          message.error((e as unknown as Error).message);
         } finally {
           setModalProps({ confirmLoading: false });
         }

@@ -3,6 +3,7 @@ export default {
     menu: '古籍管理',
     topic: '专题',
     book: '书籍',
+    detail: '详情',
   },
   nexp: {
     menu: '名词解释',

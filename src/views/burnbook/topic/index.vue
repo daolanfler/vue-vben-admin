@@ -38,7 +38,7 @@
   import { getTopicColumns } from './tableData';
   import EditModal from './editModal.vue';
   import { BurnBookItem } from '/@/api/burnook/model/bookModel';
-  import { getBookList } from '/@/api/burnook/book';
+  import { getAllBooks } from '/@/api/burnook/book';
   import { BurnBookTopicItem } from '/@/api/burnook/model/bookTopicModel';
 
   export default defineComponent({
@@ -63,7 +63,7 @@
 
       const [registerEditModal, { openModal: openEditModal, setModalProps }] = useModal();
 
-      getBookList().then((data) => {
+      getAllBooks().then((data) => {
         bookList.value = data;
       });
 

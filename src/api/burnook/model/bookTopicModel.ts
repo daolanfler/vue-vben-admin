@@ -27,5 +27,5 @@ export type BurnBookTopicAdd = Omit<BurnBookTopicUpdate, 'id'>;
 
 export type BookTopicParams = Pick<BasicPageParams, 'page'>;
 
-export type BurnBookPageListResultModel = BurnPaginationResult<BurnBookTopicItem>;
-export type BurnBookPageListResultItemsModel = BurnPaginationResultItems<BurnBookTopicItem>;
+export type BurnBookTopicListResultModel = BurnPaginationResult<BurnBookTopicItem>;
+export type BurnBookTopicListResultItemsModel = BurnPaginationResultItems<BurnBookTopicItem>;

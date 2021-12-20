@@ -3,6 +3,7 @@ export default {
     menu: 'BookManage',
     topic: 'Topic',
     book: 'Book',
+    detail: 'Detail',
   },
   nexp: {
     menu: 'Word Explain',

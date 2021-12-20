@@ -23,9 +23,18 @@ const bookRoutes: AppRouteModule = {
     {
       path: 'books',
       name: 'BookManage',
-      component: () => import('/@/views/burnbook/topic/index.vue'),
+      component: () => import('/@/views/burnbook/book/index.vue'),
       meta: {
         title: t('routes.burnbook.book.book'),
+      },
+    },
+    {
+      path: ':id',
+      name: 'BookItem',
+      component: () => import('/@/views/burnbook/book/singleBook/index.vue'),
+      meta: {
+        title: t('routes.burnbook.book.detail'),
+        hideMenu: true,
       },
     },
   ],

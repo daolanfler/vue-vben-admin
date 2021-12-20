@@ -40,6 +40,7 @@ export function useForm(props?: Props): UseFormReturnType {
       () => props,
       () => {
         props && instance.setProps(getDynamicProps(props));
+        console.log('watch shemas changed inside useForm');
       },
       {
         immediate: true,
