@@ -1,5 +1,5 @@
 import { t } from '../../../../hooks/web/useI18n';
-import { getParentLayout, LAYOUT } from '../../../constant';
+import { LAYOUT } from '../../../constant';
 import { AppRouteModule } from '../../../types';
 
 const bookRoutes: AppRouteModule = {
@@ -9,31 +9,31 @@ const bookRoutes: AppRouteModule = {
   redirect: '/book-manage/topic',
   meta: {
     icon: 'ion:key-outline',
-    title: t('routes.burnbook.book.menu'),
+    title: t('routes.burnook.book.menu'),
   },
   children: [
     {
       path: 'topic',
       name: 'BookTopic',
-      component: () => import('/@/views/burnbook/topic/index.vue'),
+      component: () => import('/@/views/burnook/book-manage/topic/index.vue'),
       meta: {
-        title: t('routes.burnbook.book.topic'),
+        title: t('routes.burnook.book.topic'),
       },
     },
     {
       path: 'books',
       name: 'BookManage',
-      component: () => import('/@/views/burnbook/book/index.vue'),
+      component: () => import('/@/views/burnook/book-manage/book/index.vue'),
       meta: {
-        title: t('routes.burnbook.book.book'),
+        title: t('routes.burnook.book.book'),
       },
     },
     {
       path: ':id',
       name: 'BookItem',
-      component: () => import('/@/views/burnbook/book/singleBook/index.vue'),
+      component: () => import('/@/views/burnook/book-manage/book/singleBook/index.vue'),
       meta: {
-        title: t('routes.burnbook.book.detail'),
+        title: t('routes.burnook.book.detail'),
         hideMenu: true,
       },
     },

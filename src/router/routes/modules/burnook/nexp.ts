@@ -9,23 +9,23 @@ const nexpRoutes: AppRouteModule = {
   redirect: '/nexp-manage/cate',
   meta: {
     icon: 'ion:key-outline',
-    title: t('routes.burnbook.nexp.menu'),
+    title: t('routes.burnook.nexp.menu'),
   },
   children: [
     {
       path: 'cate',
       name: 'NexpCate',
-      component: () => import('/@/views/burnbook/topic/index.vue'),
+      component: () => import('/@/views/burnook/nexp-manage/cate/index.vue'),
       meta: {
-        title: t('routes.burnbook.nexp.cate'),
+        title: t('routes.burnook.nexp.cate'),
       },
     },
     {
       path: 'all',
       name: 'NexpAll',
-      component: () => import('/@/views/burnbook/topic/index.vue'),
+      component: () => import('/@/views/burnook/nexp-manage/cate/index.vue'),
       meta: {
-        title: t('routes.burnbook.nexp.all'),
+        title: t('routes.burnook.nexp.all'),
       },
     },
   ],
