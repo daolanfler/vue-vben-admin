@@ -1,7 +1,7 @@
 import { BasicColumn } from '../../../../components/Table';
 import { formatToDateTime } from '/@/utils/dateUtil';
 
-export function getTopicColumns(): BasicColumn[] {
+export function getCateColumns(): BasicColumn[] {
   return [
     {
       title: '名称',

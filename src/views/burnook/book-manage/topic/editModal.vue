@@ -137,7 +137,7 @@
               cate_id: model.cate_id,
               name: model.name,
             });
-            message.success('编辑成功');
+            message.success('添加成功');
           }
           emit('confirmed');
           closeModal();
