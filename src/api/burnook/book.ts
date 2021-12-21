@@ -2,9 +2,9 @@ import {
   BurnBookDetail,
   BurnBookItem,
   BurnBookListParams,
-  BurnBookListResultItemsModel,
   BurnBookListResultModel,
 } from './model/bookModel';
+import { useDataToItems } from './utils';
 import { defHttp } from '/@/utils/http/axios';
 
 enum Api {
@@ -23,12 +23,7 @@ export const getBookList = async (params: BurnBookListParams) => {
       params,
     })
     .then((data) => {
-      const dataCopy: BurnBookListResultItemsModel = {
-        ...data,
-        items: data.data,
-      };
-      delete dataCopy.data;
-      return dataCopy;
+      return useDataToItems(data);
     });
 };
 

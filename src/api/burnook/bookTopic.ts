@@ -1,24 +1,19 @@
 import { defHttp } from '../../utils/http/axios';
 import {
   BookTopicParams,
-  BurnBookTopicListResultItemsModel,
-  BurnBookTopicListResultModel,
+  BurnBookTopicPageResult,
   BurnBookTopicAdd,
   BurnBookTopicUpdate,
 } from './model/bookTopicModel';
+import { useDataToItems } from './utils';
 
 enum Api {
   BookTopics = '/v1/book-topics',
 }
 
 export const getBookTopicList = async (params: BookTopicParams) => {
-  return defHttp.get<BurnBookTopicListResultModel>({ url: Api.BookTopics, params }).then((data) => {
-    const dataCopy: BurnBookTopicListResultItemsModel = {
-      ...data,
-      items: data.data,
-    };
-    delete dataCopy.data;
-    return dataCopy;
+  return defHttp.get<BurnBookTopicPageResult>({ url: Api.BookTopics, params }).then((data) => {
+    return useDataToItems(data);
   });
 };
 
