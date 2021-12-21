@@ -2,6 +2,12 @@
   <PageWrapper contentBackground contentClass="flex" dense contentFullHeight fixedHeight>
     <BasicTable @register="registerTable">
       <template #toolbar>
+        <a-input-search
+          v-model:value="keyword"
+          placeholder="输入关键词查询"
+          style="width: 200px"
+          @search="handleReload"
+        />
         <a-button type="primary" @click="handleAddNexp">添加名词</a-button>
         <a-button type="primary" @click="handleReloadCurrent"> 刷新当前页 </a-button>
         <!-- <a-button type="primary" @click="handleReload"> 刷新并返回第一页 </a-button> -->
@@ -43,11 +49,16 @@
     components: { BasicTable, PageWrapper, TableAction, EditModal },
     setup() {
       const isModalEdit = ref(true);
+      const keyword = ref('');
+
       const [registerTable, { reload }] = useTable({
-        title: '古籍主题',
+        title: '所有名词',
         columns: getNexpColumns(),
         api: getNexpList,
         pagination: { pageSize: 20 },
+        searchInfo: {
+          keyword,
+        },
         actionColumn: {
           width: 160,
           title: '操作',
@@ -97,6 +108,7 @@
         isModalEdit,
         handleAddNexp: handleAddNexp,
         cateList,
+        keyword,
       };
     },
   });
