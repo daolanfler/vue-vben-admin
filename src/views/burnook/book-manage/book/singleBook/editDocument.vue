@@ -13,11 +13,10 @@
 
 <script lang="ts" setup>
   import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
-  import { reactive, h, computed, ref, watch } from 'vue';
-  import { BurnBookItem, BurnDocument } from '/@/api/burnook/model/bookModel';
+  import { h, computed, ref, watch } from 'vue';
+  import { BurnDocument } from '/@/api/burnook/model/bookModel';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { Tinymce } from '/@/components/Tinymce/index';
-  import { BurnDocDetail } from '/@/api/burnook/model/docModel';
   import { getDocDetail, updateDocDetail } from '/@/api/burnook/doc';
   import { message } from 'ant-design-vue';
 
@@ -27,7 +26,7 @@
     title: '',
     content: '',
   });
-  const [register, { closeModal, setModalProps }] = useModalInner((data: BurnDocument) => {
+  const [register, { setModalProps }] = useModalInner((data: BurnDocument) => {
     doc.value = data;
   });
 
@@ -111,7 +110,7 @@
         title: formModel.title,
       });
     } catch (e) {
-      e.message && message.error((e as Error).message);
+      message.error((e as Error).message);
     } finally {
       setModalProps({ confirmLoading: false });
     }

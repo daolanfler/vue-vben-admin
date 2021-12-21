@@ -23,7 +23,7 @@ const nexpRoutes: AppRouteModule = {
     {
       path: 'all',
       name: 'NexpAll',
-      component: () => import('/@/views/burnook/nexp-manage/cate/index.vue'),
+      component: () => import('/@/views/burnook/nexp-manage/nexp/index.vue'),
       meta: {
         title: t('routes.burnook.nexp.all'),
       },
