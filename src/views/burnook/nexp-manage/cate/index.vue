@@ -15,6 +15,12 @@
               icon: 'ant-design:edit-outlined',
               onClick: () => handleEdit(record),
             },
+            {
+              label: '删除',
+              icon: 'ant-design:delete-outlined',
+              color: 'error',
+              onClick: () => handleDelete(record),
+            },
           ]"
         />
       </template>
@@ -35,8 +41,9 @@
   import { useModal } from '/@/components/Modal';
   import { getCateColumns } from './tableData';
   import EditModal from './editModal.vue';
-  import { getNexpCateList } from '/@/api/burnook/nexp';
+  import { deleteNexpCate, getNexpCateList } from '/@/api/burnook/nexp';
   import { BurnNexpCateItem } from '/@/api/burnook/model/nexpModel';
+  import { message, Modal } from 'ant-design-vue';
 
   export default defineComponent({
     components: { BasicTable, PageWrapper, TableAction, EditModal },
@@ -81,6 +88,17 @@
         isModalEdit.value = false;
         openEditModal(true);
       };
+      const handleDelete = async (record: BurnNexpCateItem) => {
+        Modal.confirm({
+          title: '删除',
+          content: `确认删除${record.name}吗？`,
+          onOk: async () => {
+            await deleteNexpCate(record.id);
+            message.success('操作成功');
+            handleReloadCurrent();
+          },
+        });
+      };
       return {
         registerTable,
         handleReloadCurrent,
@@ -91,6 +109,7 @@
         editCate,
         isModalEdit,
         handleAddCate,
+        handleDelete,
       };
     },
   });

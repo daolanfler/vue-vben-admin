@@ -27,6 +27,10 @@ export const updateNexpCate = async (id: number, data: { name: string }) => {
   return defHttp.put<BurnNexpCateItem>({ url: `${Api.NexpCate}/${id}`, data });
 };
 
+export const deleteNexpCate = async (id: number) => {
+  return defHttp.delete({ url: `${Api.NexpCate}/${id}` });
+};
+
 // 名词
 export const getNexpList = async (params: { page: number; keyword: string }) => {
   return defHttp.get<BurnNexpPageResult>({ url: `${Api.Nexp}`, params }).then((data) => {
@@ -46,4 +50,8 @@ export const addNexp = async (data: BurnNexpAdd) => {
 
 export const updateNexp = async (id: number, data: BurnNexpAdd) => {
   return defHttp.put({ url: `${Api.Nexp}/${id}`, data });
+};
+
+export const deleteNexp = async (id: number) => {
+  return defHttp.delete({ url: `${Api.Nexp}/${id}` });
 };
