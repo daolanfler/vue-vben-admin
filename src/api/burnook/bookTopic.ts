@@ -24,3 +24,7 @@ export const updateBookTopic = (id: number, postData: Omit<BurnBookTopicUpdate, 
 export const addBookTopic = (data: BurnBookTopicAdd) => {
   return defHttp.post({ url: `${Api.BookTopics}`, data });
 };
+
+export const deleteBookTopic = (id: number) => {
+  return defHttp.delete({ url: `${Api.BookTopics}/${id}` });
+};

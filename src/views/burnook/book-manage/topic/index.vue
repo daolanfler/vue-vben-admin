@@ -15,6 +15,12 @@
               icon: 'ant-design:edit-outlined',
               onClick: () => handleEdit(record),
             },
+            {
+              label: '删除',
+              icon: 'ant-design:delete-outlined',
+              color: 'error',
+              onClick: () => handleDelete(record),
+            },
           ]"
         />
       </template>
@@ -31,7 +37,7 @@
 
 <script lang="ts">
   import { defineComponent, ref, UnwrapNestedRefs } from 'vue';
-  import { getBookTopicList } from '/@/api/burnook/bookTopic';
+  import { deleteBookTopic, getBookTopicList } from '/@/api/burnook/bookTopic';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { PageWrapper } from '/@/components/Page';
   import { useModal } from '/@/components/Modal';
@@ -40,6 +46,7 @@
   import { BurnBookItem } from '/@/api/burnook/model/bookModel';
   import { getAllBooks } from '/@/api/burnook/book';
   import { BurnBookTopicItem } from '/@/api/burnook/model/bookTopicModel';
+  import { message, Modal } from 'ant-design-vue';
 
   export default defineComponent({
     components: { BasicTable, PageWrapper, TableAction, EditModal },
@@ -89,6 +96,18 @@
         isModalEdit.value = false;
         openEditModal(true);
       };
+      const handleDelete = async (record: BurnBookTopicItem) => {
+        Modal.confirm({
+          title: '删除',
+          content: `确认删除${record.name}吗？`,
+          onOk: async () => {
+            await deleteBookTopic(record.id);
+            message.success('操作成功');
+            handleReloadCurrent();
+          },
+        });
+      };
+
       return {
         registerTable,
         handleReloadCurrent,
@@ -100,6 +119,7 @@
         bookList,
         isModalEdit,
         handleAddTopic,
+        handleDelete,
       };
     },
   });
