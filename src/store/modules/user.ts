@@ -16,6 +16,7 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { isArray } from '/@/utils/is';
 import { h } from 'vue';
+import Cookie from 'js-cookie';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -90,21 +91,22 @@ export const useUserStore = defineStore({
     ): Promise<GetUserInfoModel | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
-        const data = await loginApi(loginParams, mode);
-        const { token } = data;
+        await loginApi(loginParams, mode);
+        // const { token } = data;
 
-        // save token
-        this.setToken(token);
+        // TODO save token 先存个COOKIE 代替 token
+        const sessionCookie = Cookie.get('session');
+        this.setToken(sessionCookie);
         return this.afterLoginAction(goHome);
       } catch (error) {
         return Promise.reject(error);
       }
     },
+
     async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null;
       // get user info
       const userInfo = await this.getUserInfoAction();
-
       const sessionTimeout = this.sessionTimeout;
       if (sessionTimeout) {
         this.setSessionTimeout(false);
@@ -122,6 +124,7 @@ export const useUserStore = defineStore({
       }
       return userInfo;
     },
+
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();

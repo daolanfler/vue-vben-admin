@@ -6,6 +6,7 @@ import type {
   FunctionalComponent,
   PropType as VuePropType,
 } from 'vue';
+import { GlobEnvConfig } from './config';
 
 declare global {
   const __APP_INFO__: {
@@ -53,6 +54,9 @@ declare global {
     path?: EventTarget[];
   }
   interface ImportMetaEnv extends ViteEnv {
+    __: unknown;
+  }
+  interface ImportMetaEnv extends GlobEnvConfig {
     __: unknown;
   }
 

@@ -159,4 +159,7 @@ export interface GlobEnvConfig {
   VITE_GLOB_APP_SHORT_NAME: string;
   // Upload url
   VITE_GLOB_UPLOAD_URL?: string;
+
+  BURNOOK_USER?: string;
+  BURNOOK_PASSWORD?: string;
 }

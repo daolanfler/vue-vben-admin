@@ -100,7 +100,13 @@
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { isDevMode } from '../../../utils/env';
   //import { onKeyStroke } from '@vueuse/core';
+
+  interface LoginFormData {
+    account: string;
+    password: string;
+  }
 
   const ACol = Col;
   const ARow = Row;
@@ -118,10 +124,11 @@
   const loading = ref(false);
   const rememberMe = ref(false);
 
-  const formData = reactive({
-    account: 'vben',
-    password: '123456',
-  });
+  const defaultUser: LoginFormData = {
+    account: import.meta.env.BURNOOK_USER || '',
+    password: import.meta.env.BURNOOK_PASSWORD || '',
+  };
+  const formData = reactive(defaultUser);
 
   const { validForm } = useFormValid(formRef);
 
@@ -134,18 +141,16 @@
     if (!data) return;
     try {
       loading.value = true;
-      const userInfo = await userStore.login({
+      await userStore.login({
         password: data.password,
         username: data.account,
         mode: 'none', //不要默认的错误提示
       });
-      if (userInfo) {
-        notification.success({
-          message: t('sys.login.loginSuccessTitle'),
-          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
-          duration: 3,
-        });
-      }
+      notification.success({
+        message: t('sys.login.loginSuccessTitle'),
+        description: `${t('sys.login.loginSuccessDesc')}: ${data.account}`,
+        duration: 3,
+      });
     } catch (error) {
       console.log(error);
       createErrorModal({

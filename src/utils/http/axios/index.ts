@@ -49,40 +49,43 @@ const transform: AxiosTransform = {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'));
     }
-    //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, result, message } = data;
+    // no data.code returned, just return the resut
+    const { data: result } = data;
+    return result;
+    // //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
+    // const { code, result, message } = data;
 
-    // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
-    if (hasSuccess) {
-      return result;
-    }
+    // // 这里逻辑可以根据项目进行修改
+    // const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
+    // if (hasSuccess) {
+    //   return result;
+    // }
 
     // 在此处根据自己项目的实际情况对不同的code执行不同的操作
     // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
-    let timeoutMsg = '';
-    switch (code) {
-      case ResultEnum.TIMEOUT:
-        timeoutMsg = t('sys.api.timeoutMessage');
-        const userStore = useUserStoreWithOut();
-        userStore.setToken(undefined);
-        userStore.logout(true);
-        break;
-      default:
-        if (message) {
-          timeoutMsg = message;
-        }
-    }
+    // let timeoutMsg = '';
+    // switch (code) {
+    //   case ResultEnum.TIMEOUT:
+    //     timeoutMsg = t('sys.api.timeoutMessage');
+    //     const userStore = useUserStoreWithOut();
+    //     userStore.setToken(undefined);
+    //     userStore.logout(true);
+    //     break;
+    //   default:
+    //     if (message) {
+    //       timeoutMsg = message;
+    //     }
+    // }
 
     // errorMessageMode=‘modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
     // errorMessageMode='none' 一般是调用时明确表示不希望自动弹出错误提示
-    if (options.errorMessageMode === 'modal') {
-      createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
-    } else if (options.errorMessageMode === 'message') {
-      createMessage.error(timeoutMsg);
-    }
+    // if (options.errorMessageMode === 'modal') {
+    //   createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
+    // } else if (options.errorMessageMode === 'message') {
+    //   createMessage.error(timeoutMsg);
+    // }
 
-    throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
+    // throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
   },
 
   // 请求之前处理config
@@ -165,9 +168,9 @@ const transform: AxiosTransform = {
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message, config } = error || {};
     const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
-    const msg: string = response?.data?.error?.message ?? '';
-    const err: string = error?.toString?.() ?? '';
-    let errMessage = '';
+    const msg: string = response?.data?.message ?? '';
+    const err: string = msg || (error?.toString?.() ?? '');
+    let errMessage = err;
 
     try {
       if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
@@ -183,7 +186,7 @@ const transform: AxiosTransform = {
         } else if (errorMessageMode === 'message') {
           createMessage.error(errMessage);
         }
-        return Promise.reject(error);
+        return Promise.reject(new Error(errMessage));
       }
     } catch (error) {
       throw new Error(error as unknown as string);
