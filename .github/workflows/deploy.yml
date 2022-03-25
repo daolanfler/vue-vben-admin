@@ -17,9 +17,9 @@ jobs:
 
       - name: Sed Config Base
         shell: bash
+          # sed -i  's#VITE_PUBLIC_PATH\s*=.*#VITE_PUBLIC_PATH = /next/#g' ./.env.production
+          # sed -i  "s#VITE_BUILD_COMPRESS\s*=.*#VITE_BUILD_COMPRESS = 'gzip'#g" ./.env.production
         run: |
-          sed -i  's#VITE_PUBLIC_PATH\s*=.*#VITE_PUBLIC_PATH = /next/#g' ./.env.production
-          sed -i  "s#VITE_BUILD_COMPRESS\s*=.*#VITE_BUILD_COMPRESS = 'gzip'#g" ./.env.production
           cat ./.env.production
 
       - name: use Node.js 16
@@ -45,17 +45,19 @@ jobs:
           yarn run build
 
       - name: Deploy
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          ftp-server: ftps://${{ secrets.FTP_SERVER }}:21/var/www/admin.dagladefler.xyz/html
-          ftp-username: ${{ secrets.FTP_USERNAME }}
-          ftp-password: ${{ secrets.FTP_PASSWORD }}
-          # explicit ftps
-          # ftp-protocol: ftps
-          # explicit ftps port is 21
-          # port: 21
-          local-dir: dist
-          # server-dir: /var/www/admin.dagladefler.xyz/html/
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: dist/
+          server-dir: /var/www/admin.dagladefler.xyz/html/
+
+          # server: ftps://${{ secrets.FTP_SERVER }}:21/var/www/admin.dagladefler.xyz/html
+          # # explicit ftps
+          # # ftp-protocol: ftps
+          # # explicit ftps port is 21
+          # # port: 21
 
   # push-to-gh-pages:
   #   if: "contains(github.event.head_commit.message, '[release]')"
