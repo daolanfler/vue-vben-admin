@@ -24,3 +24,8 @@ export function clearAuthCache(immediate = true) {
   const fn = isLocal ? Persistent.clearLocal : Persistent.clearSession;
   return fn(immediate);
 }
+
+export function getCookie(name: string) {
+  const match = document.cookie.match(new RegExp(new RegExp('(^| )' + name + '=([^;]+)')));
+  if (match) return match[2];
+}

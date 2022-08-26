@@ -5,7 +5,7 @@ import { store } from '/@/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
-import { getAuthCache, setAuthCache } from '/@/utils/auth';
+import { getAuthCache, getCookie, setAuthCache } from '/@/utils/auth';
 import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel';
 import { doLogout, getUserInfo, loginApi } from '/@/api/sys/user';
 import { useI18n } from '/@/hooks/web/useI18n';
@@ -16,7 +16,6 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { isArray } from '/@/utils/is';
 import { h } from 'vue';
-import Cookie from 'js-cookie';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -95,7 +94,7 @@ export const useUserStore = defineStore({
         // const { token } = data;
 
         // TODO save token 先存个COOKIE 代替 token
-        const sessionCookie = Cookie.get('session');
+        const sessionCookie = getCookie('session');
         this.setToken(sessionCookie);
         return this.afterLoginAction(goHome);
       } catch (error) {
